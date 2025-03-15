@@ -6,32 +6,18 @@ from torch.utils.data import DataLoader
 class Model:
     
     def __init__(self, model_name: str):
-        
-        # Try to enable Flash Attention 2 if available
-        try:
-            self.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype='auto',
-                device_map='auto',
-                attn_implementation="flash_attention_2",
-            )
-            print("Flash Attention 2 enabled for faster inference.")
-            
-        except Exception as e:
-                print("Warning: Flash Attention 2 not available. Model will run slower than normal.")
-                print("To enable, install with: pip install flash-attn --no-build-isolation")
-                self.model = AutoModelForCausalLM.from_pretrained(
-                    model_name,
-                    torch_dtype='auto',
-                    device_map='auto'
-                )
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype='auto',
+            device_map='auto'
+        )
         
         self.model = torch.compile(self.model)
         
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
         self.device = self.model.device
     
-    def generate_responses(self, dataloader, max_new_tokens=512):
+    def generate_responses(self, dataloader, max_new_tokens=2048):
         """
         Generate responses for inputs from a dataloader
         
@@ -54,7 +40,7 @@ class Model:
                     batch_input_ids,
                     attention_mask=batch_attention_mask,
                     max_new_tokens=max_new_tokens,
-                    do_sample=False # Make the model deterministic
+                    do_sample=False
                 )
             
             # Process each output in the batch
