@@ -40,6 +40,7 @@ class Model:
                     batch_input_ids,
                     attention_mask=batch_attention_mask,
                     max_new_tokens=max_new_tokens,
+                    do_sample=False
                 )
  
             # Batch decode all generated parts at once
