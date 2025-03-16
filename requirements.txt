@@ -1,3 +1,5 @@
 datasets
 tqdm
 transformers
+accelerate
+pandas
