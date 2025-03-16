@@ -1,0 +1,3 @@
+Answer the following questions and think step by step.
+List out your answer followed by #### on a new line.
+Here are some examples:

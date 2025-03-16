@@ -7,12 +7,12 @@ from torch.utils.data import Dataset
 from transformers import DataCollatorWithPadding
 
 class BaseDataset(Dataset):
-    def __init__(self, dataset_name, tokenizer, instructions=None, split='train'):
+    def __init__(self, dataset_name, tokenizer, instructions, split='train'):
         self.name = dataset_name
         self.tokenizer = tokenizer
-        self.instructions = instructions
+        self.instructions = self._load_system_prompt(dataset_name) if instructions is None else instructions
         self.dataset = self._load_dataset(dataset_name, split)
-        self.system_prompt = {'role': 'system', 'content': instructions} if instructions else None
+        self.system_prompt = {'role': 'system', 'content': self.instructions} if self.instructions else None
         
     def _load_dataset(self, dataset_name, split):
         """Load the dataset based on its name"""
@@ -23,6 +23,12 @@ class BaseDataset(Dataset):
             
         dataset = datasets.load_dataset(dataset_name, name=config, split=split)
         return dataset
+    
+    def _load_system_prompt(self, dataset_name):
+        prompt = ''
+        if dataset_name == DatasetNames.GSM8k:
+            prompt = open('attribution/prompts/GSM8k.txt').read()
+        return prompt
     
     def __len__(self):
         return len(self.dataset)
@@ -40,12 +46,16 @@ class GSM8kDataset(BaseDataset):
     def __init__(self, tokenizer, instructions=None, split='train', n_instruction_samples=5):
         super().__init__(DatasetNames.GSM8k, tokenizer, instructions, split)
         
+        if split == 'test' and instructions is None:
+            raise ValueError("Instructions must be provided for the test split")
+        
         # Create instructions if not provided
         if instructions is None:
-            self.instructions = self.create_instructions(n_instruction_samples)
-            self.system_prompt = {'role': 'system', 'content': self.instructions}
+            self.instructions = self.instructions + self.create_examples(n_instruction_samples)
+            
+        self.system_prompt = {'role': 'system', 'content': self.instructions}
     
-    def create_instructions(self, n_samples=5):
+    def create_examples(self, n_samples=5):
         # Take the first n_samples from the dataset
         samples = self.dataset.select(range(n_samples))
         

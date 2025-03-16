@@ -9,7 +9,7 @@ class Model:
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype='auto',
-            device_map='auto'
+            device_map='auto',
         )
         
         self.model = torch.compile(self.model)
@@ -17,7 +17,7 @@ class Model:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
         self.device = self.model.device
     
-    def generate_responses(self, dataloader, max_new_tokens=2048):
+    def generate_responses(self, dataloader, max_new_tokens=1024):
         """
         Generate responses for inputs from a dataloader
         
@@ -40,7 +40,6 @@ class Model:
                     batch_input_ids,
                     attention_mask=batch_attention_mask,
                     max_new_tokens=max_new_tokens,
-                    do_sample=False
                 )
             
             # Process each output in the batch
