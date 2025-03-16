@@ -89,17 +89,45 @@ class GSM8kDataset(BaseDataset):
 
 
 # GSM8k evaluation functions
+
+# Standard format
 ANS_RE = re.compile(r"#### (\-?[0-9\.\,]+)")
+# Any LaTeX command that wraps an answer
+LATEX_RE = re.compile(r"\\[a-zA-Z]+\{(\-?[0-9\.\,]+)\}")
+# Inline LaTeX expressions
+INLINE_LATEX_RE = re.compile(r"\$(\-?[0-9\.\,]+)\$")
 INVALID_ANS = "[invalid]"
 
 def extract_answer_gsm8k(completion):
+    # First try to match the standard format
     match = ANS_RE.search(completion)
     if match:
         match_str = match.group(1).strip()
         match_str = match_str.replace(",", "")
         return match_str
-    else:
-        return INVALID_ANS
+    
+    # Then try to match any LaTeX command wrapper
+    match = LATEX_RE.search(completion)
+    if match:
+        match_str = match.group(1).strip()
+        match_str = match_str.replace(",", "")
+        return match_str
+    
+    # Try to match inline LaTeX expressions
+    match = INLINE_LATEX_RE.search(completion)
+    if match:
+        match_str = match.group(1).strip()
+        match_str = match_str.replace(",", "")
+        return match_str
+    
+    # No valid format found
+    return INVALID_ANS
+
+
+def is_correct_gsm8k(model_completion, gt_example):
+    gt_answer = extract_answer_gsm8k(gt_example["answer"])
+    assert gt_answer != INVALID_ANS
+    return extract_answer_gsm8k(model_completion) == gt_answer
 
 
 def is_correct_gsm8k(model_completion, gt_example):

@@ -42,7 +42,6 @@ class Model:
                     max_new_tokens=max_new_tokens,
                 )
  
-            
             # Batch decode all generated parts at once
             batch_generated_text = self.tokenizer.batch_decode(batch_output_ids[:, batch_input_ids.shape[1]:], skip_special_tokens=True)
             generations.extend(batch_generated_text)
