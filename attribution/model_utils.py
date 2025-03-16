@@ -41,22 +41,10 @@ class Model:
                     attention_mask=batch_attention_mask,
                     max_new_tokens=max_new_tokens,
                 )
-            
-            # Process each output in the batch
-            # Extract generated parts for the entire batch at once
-            generated_parts = []
-            for i, (input_seq, output_seq) in enumerate(zip(batch_input_ids, batch_output_ids)):
-                # Get the true input length using the attention mask if available
-                if batch_attention_mask is not None:
-                    input_length = batch_attention_mask[i].sum().item()
-                else:
-                    input_length = len(input_seq)
-                
-                generated_part = output_seq[input_length:]
-                generated_parts.append(generated_part)
+ 
             
             # Batch decode all generated parts at once
-            batch_generated_text = self.tokenizer.batch_decode(generated_parts, skip_special_tokens=True)
+            batch_generated_text = self.tokenizer.batch_decode(batch_output_ids[:, batch_input_ids.shape[1]:], skip_special_tokens=True)
             generations.extend(batch_generated_text)
         
         return generations
