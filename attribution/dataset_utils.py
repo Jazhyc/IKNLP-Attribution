@@ -96,38 +96,43 @@ ANS_RE = re.compile(r"#### (\-?[0-9\.\,]+)")
 LATEX_RE = re.compile(r"\\[a-zA-Z]+\{(\-?[0-9\.\,]+)\}")
 # Inline LaTeX expressions
 INLINE_LATEX_RE = re.compile(r"\$(\-?[0-9\.\,]+)\$")
+# General number pattern to find the last number in the text
+LAST_NUMBER_RE = re.compile(r"(\-?[0-9]+(?:\.[0-9]+)?)")
 INVALID_ANS = "[invalid]"
 
 def extract_answer_gsm8k(completion):
-    # First try to match the standard format
-    match = ANS_RE.search(completion)
-    if match:
-        match_str = match.group(1).strip()
-        match_str = match_str.replace(",", "")
-        return match_str
     
-    # Then try to match any LaTeX command wrapper
-    match = LATEX_RE.search(completion)
-    if match:
-        match_str = match.group(1).strip()
-        match_str = match_str.replace(",", "")
-        return match_str
+    # # First try to match the standard format
+    # match = ANS_RE.search(completion)
+    # if match:
+    #     match_str = match.group(1).strip()
+    #     match_str = match_str.replace(",", "")
+    #     return match_str
     
-    # Try to match inline LaTeX expressions
-    match = INLINE_LATEX_RE.search(completion)
-    if match:
-        match_str = match.group(1).strip()
+    # # Then try to match any LaTeX command wrapper
+    # match = LATEX_RE.search(completion)
+    # if match:
+    #     match_str = match.group(1).strip()
+    #     match_str = match_str.replace(",", "")
+    #     return match_str
+    
+    # # Try to match inline LaTeX expressions
+    # match = INLINE_LATEX_RE.search(completion)
+    # if match:
+    #     match_str = match.group(1).strip()
+    #     match_str = match_str.replace(",", "")
+    #     return match_str
+    
+    # Find the last number in the completion
+    matches = LAST_NUMBER_RE.findall(completion)
+    if matches:
+        # Get the last number found in the text
+        match_str = matches[-1].strip()
         match_str = match_str.replace(",", "")
         return match_str
     
     # No valid format found
     return INVALID_ANS
-
-
-def is_correct_gsm8k(model_completion, gt_example):
-    gt_answer = extract_answer_gsm8k(gt_example["answer"])
-    assert gt_answer != INVALID_ANS
-    return extract_answer_gsm8k(model_completion) == gt_answer
 
 
 def is_correct_gsm8k(model_completion, gt_example):
