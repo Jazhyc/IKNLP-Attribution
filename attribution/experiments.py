@@ -29,7 +29,7 @@ def evaluate_generations(generations, dataset):
     
     num_correct = 0
     for gen, gt in zip(generations, gt_answers):
-        if gen == gt:
+        if extract_answer_gsm(gen) == gt:
             num_correct += 1
             
     return num_correct / len(generations)
