@@ -1,7 +1,5 @@
-from constants import DatasetNames
 import datasets
 import re
-from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
 from transformers import DataCollatorWithPadding
@@ -10,20 +8,15 @@ import locale
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 class BaseDataset(Dataset):
-    def __init__(self, dataset_name, tokenizer, instructions, split='train'):
+    def __init__(self, dataset_name, tokenizer, instructions, split='train', config='main'):
         self.name = dataset_name
         self.tokenizer = tokenizer
         self.instructions = self._load_system_prompt(dataset_name) if instructions is None else instructions
-        self.dataset = self._load_dataset(dataset_name, split)
+        self.dataset = self._load_dataset(dataset_name, split, config)
         self.system_prompt = {'role': 'system', 'content': self.instructions} if self.instructions else None
         
-    def _load_dataset(self, dataset_name, split):
+    def _load_dataset(self, dataset_name, split, config='main'):
         """Load the dataset based on its name"""
-        if dataset_name == DatasetNames.GSM8k:
-            config = 'main'
-        else:
-            raise ValueError(f"Dataset {dataset_name} not supported yet")
-            
         dataset = datasets.load_dataset(dataset_name, name=config, split=split)
         return dataset
     
@@ -45,9 +38,9 @@ class BaseDataset(Dataset):
         raise NotImplementedError("Subclasses must implement this method")
 
 
-class GSM8kDataset(BaseDataset):
-    def __init__(self, tokenizer, instructions=None, split='train', n_instruction_samples=5):
-        super().__init__(DatasetNames.GSM8k, tokenizer, instructions, split)
+class GSMDataset(BaseDataset):
+    def __init__(self, dataset_name, tokenizer, instructions=None, split='train', config='main', n_instruction_samples=5):
+        super().__init__(dataset_name, tokenizer, instructions, split, config)
         
         if split == 'test' and instructions is None:
             raise ValueError("Instructions must be provided for the test split")
@@ -97,7 +90,7 @@ INVALID_ANS = "[invalid]"
 # Current regex:
 LAST_NUMBER_RE = r'\b\d{1,3}(?:,?\d{3})*(?:\.\d+)?(?!\d)'
 
-def extract_answer_gsm8k(completion):
+def extract_answer_gsm(completion):
     
     # Find the last occurrence of a number
     match = re.findall(LAST_NUMBER_RE, completion)
@@ -108,19 +101,12 @@ def extract_answer_gsm8k(completion):
     # No valid format found
     return INVALID_ANS
 
-def is_correct_gsm8k(model_completion, gt_example):
-    gt_answer = extract_answer_gsm8k(gt_example["answer"])
+def is_correct_gsm(model_completion, gt_example):
+    gt_answer = extract_answer_gsm(gt_example)
     if gt_answer == INVALID_ANS:
         print(model_completion)
         raise ValueError("Invalid answer for ground truth")
-    return extract_answer_gsm8k(model_completion) == gt_answer
-
-# Helper function to get the appropriate dataset instance
-def get_dataset_instance(dataset_name, tokenizer, instructions=None, split='train'):
-    if dataset_name == DatasetNames.GSM8k:
-        return GSM8kDataset(tokenizer, instructions, split)
-    else:
-        raise ValueError(f"Dataset {dataset_name} not supported yet")
+    return extract_answer_gsm(model_completion) == gt_answer
 
 class PaddingCollator:
     def __init__(self, tokenizer):
