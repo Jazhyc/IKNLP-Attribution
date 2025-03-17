@@ -6,6 +6,9 @@ import torch
 from torch.utils.data import Dataset
 from transformers import DataCollatorWithPadding
 
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+
 class BaseDataset(Dataset):
     def __init__(self, dataset_name, tokenizer, instructions, split='train'):
         self.name = dataset_name
@@ -26,8 +29,8 @@ class BaseDataset(Dataset):
     
     def _load_system_prompt(self, dataset_name):
         prompt = ''
-        if dataset_name == DatasetNames.GSM8k:
-            prompt = open('attribution/prompts/GSM8k.txt').read()
+        # if dataset_name == DatasetNames.GSM8k:
+        #     prompt = open('attribution/prompts/GSM8k.txt').read()
         return prompt
     
     def __len__(self):
@@ -89,55 +92,27 @@ class GSM8kDataset(BaseDataset):
 
 
 # GSM8k evaluation functions
-
-# Standard format
-ANS_RE = re.compile(r"#### (\-?[0-9\.\,]+)")
-# Any LaTeX command that wraps an answer
-LATEX_RE = re.compile(r"\\[a-zA-Z]+\{(\-?[0-9\.\,]+)\}")
-# Inline LaTeX expressions
-INLINE_LATEX_RE = re.compile(r"\$(\-?[0-9\.\,]+)\$")
-# General number pattern to find the last number in the text
-LAST_NUMBER_RE = re.compile(r"(\-?[0-9]+(?:\.[0-9]+)?)")
 INVALID_ANS = "[invalid]"
+
+# Current regex:
+LAST_NUMBER_RE = r'\b\d{1,3}(?:,?\d{3})*(?:\.\d+)?(?!\d)'
 
 def extract_answer_gsm8k(completion):
     
-    # # First try to match the standard format
-    # match = ANS_RE.search(completion)
-    # if match:
-    #     match_str = match.group(1).strip()
-    #     match_str = match_str.replace(",", "")
-    #     return match_str
+    # Find the last occurrence of a number
+    match = re.findall(LAST_NUMBER_RE, completion)
     
-    # # Then try to match any LaTeX command wrapper
-    # match = LATEX_RE.search(completion)
-    # if match:
-    #     match_str = match.group(1).strip()
-    #     match_str = match_str.replace(",", "")
-    #     return match_str
-    
-    # # Try to match inline LaTeX expressions
-    # match = INLINE_LATEX_RE.search(completion)
-    # if match:
-    #     match_str = match.group(1).strip()
-    #     match_str = match_str.replace(",", "")
-    #     return match_str
-    
-    # Find the last number in the completion
-    matches = LAST_NUMBER_RE.findall(completion)
-    if matches:
-        # Get the last number found in the text
-        match_str = matches[-1].strip()
-        match_str = match_str.replace(",", "")
-        return match_str
+    if match:
+        return locale.atof(match[-1])
     
     # No valid format found
     return INVALID_ANS
 
-
 def is_correct_gsm8k(model_completion, gt_example):
     gt_answer = extract_answer_gsm8k(gt_example["answer"])
-    assert gt_answer != INVALID_ANS
+    if gt_answer == INVALID_ANS:
+        print(model_completion)
+        raise ValueError("Invalid answer for ground truth")
     return extract_answer_gsm8k(model_completion) == gt_answer
 
 # Helper function to get the appropriate dataset instance
