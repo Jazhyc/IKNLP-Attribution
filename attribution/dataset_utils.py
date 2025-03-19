@@ -58,7 +58,7 @@ class GSMDataset(BaseDataset):
         # Create a system prompt
         system_prompt = []
         for sample in samples:
-            system_prompt.append(f"Question: {sample['question']}\nAnswer: {sample['answer']}")
+            system_prompt.append(f"Question: {sample['question']}\n{sample['answer']}")
             
         # Combine all the system prompts
         return '\n\n'.join(system_prompt)
@@ -71,14 +71,15 @@ class GSMDataset(BaseDataset):
         user_prompt = {'role': 'user', 'content': question}
         messages = [self.system_prompt, user_prompt]
         
-        input_ids = self.tokenizer.apply_chat_template(
+        # Format the messages into a chat template string but don't tokenize
+        formatted_prompt = self.tokenizer.apply_chat_template(
             messages,
-            tokenize=True,
+            tokenize=False,
             add_generation_prompt=True
         )
         
         return {
-            'input_ids': torch.tensor(input_ids),
+            'formatted_prompt': formatted_prompt,
             'question': question,
             'answer': answer
         }
@@ -111,23 +112,18 @@ def is_correct_gsm(model_completion, gt_example):
 class PaddingCollator:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.data_collator = DataCollatorWithPadding(tokenizer)
         
     def __call__(self, batch):
         """
-        Collate function for DataLoader that pads sequences using the tokenizer's built-in padding.
+        Collate function that passes through the formatted prompts without tokenization
         """
         questions = [item['question'] for item in batch]
         answers = [item['answer'] for item in batch]
+        formatted_prompts = [item['formatted_prompt'] for item in batch]
         
-        # Extract the features that need padding
-        features = [{'input_ids': item['input_ids']} for item in batch]
-        
-        # Use the HuggingFace collator to pad
-        padded_batch = self.data_collator(features)
-        
-        # Add back the questions and answers
-        padded_batch['questions'] = questions
-        padded_batch['answers'] = answers
-        
-        return padded_batch
+        # Return raw questions for the pipeline to process
+        return {
+            'questions': formatted_prompts,
+            'raw_questions': questions,
+            'answers': answers
+        }

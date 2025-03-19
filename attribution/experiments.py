@@ -8,15 +8,7 @@ import pandas as pd
 
 def get_fewshot_prompt(dataset_name, tokenizer, config='main'):
     """Get a few-shot prompt for the given dataset"""
-    
-    if dataset_name == DatasetNames.GSM8k:
-        n_samples = 5
-    elif dataset_name == DatasetNames.MGSM:
-        n_samples = 8
-    else:
-        raise ValueError(f"Dataset {dataset_name} not supported")
-    
-    dataset = GSMDataset(dataset_name, tokenizer, split='train', config=config, n_instruction_samples=n_samples)
+    dataset = GSMDataset(dataset_name, tokenizer, split='train', config=config, n_instruction_samples=8)
     return dataset.instructions
 
 def evaluate_generations(generations, dataset):
