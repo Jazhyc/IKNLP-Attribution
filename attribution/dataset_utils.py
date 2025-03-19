@@ -58,7 +58,32 @@ class GSMDataset(BaseDataset):
         # Create a system prompt
         system_prompt = []
         for sample in samples:
-            system_prompt.append(f"Question: {sample['question']}\n{sample['answer']}")
+            answer = sample['answer']
+            
+            # First add newlines after sentence endings
+            answer = re.sub(r'(?<=[.。।])\s*', '\n', answer)
+            
+            # Put a newline after first : and space
+            answer = answer.replace(': ', ':\n', 1)
+            
+            # Remove final newline
+            answer = answer.rstrip('\n')
+
+            # Split into lines
+            lines = answer.split('\n')
+            
+            # Format with line numbers (skipping first and last lines)
+            numbered_lines = []
+            for i, line in enumerate(lines):
+                if i == 0 or i == len(lines) - 1:  # Skip first and last lines
+                    numbered_lines.append(line)
+                else:
+                    numbered_lines.append(f"Step {i}) {line}")
+            
+            # Rejoin with newlines
+            answer = '\n'.join(numbered_lines)
+            
+            system_prompt.append(f"{sample['question']}\n{answer}")
             
         # Combine all the system prompts
         return '\n\n'.join(system_prompt)
