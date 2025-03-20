@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, LogitsProcessorList
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, LogitsProcessorList, BitsAndBytesConfig
 import torch
 from tqdm import tqdm
 from torch.utils.data import DataLoader
@@ -15,6 +15,8 @@ class Model:
             model_name,
             torch_dtype='auto',
             device_map='auto',
+            # Uncomment on resource constrained machines, leads to slower inference
+            # quantization_config=BitsAndBytesConfig(load_in_8bit=True)
         )
         
         # Create text generation pipeline with the same model
@@ -47,9 +49,9 @@ class Model:
         phrases = '|'.join(answer_phrases.values())
 
         # Regex pattern that enforces the "Step by Step Answer" format with numbered steps
-        self.output_pattern = f'(?i)(?P<prefix>{prefixes})\n(?P<calculation>(?:Step \d{{1,2}}\).*\n)+)(?:{phrases})\s+(?P<answer>\d+)\.<|endoftext|>'
+        self.output_pattern = f'(?P<prefix>{prefixes})\n(?P<calculation>(-[^\n]+\.\n){{1,10}})(?:{phrases})\s+(?P<answer>\d+)\.<|endoftext|>'
 
-        # Detailed explanation:
+        # Detailed explanation (May be outdated):
         # (?i) - Case insensitive flag for the entire pattern
         # (?P<prefix>{prefixes}) - Named capture group "prefix" matching one of the prefix patterns (e.g., "Step-by-Step Answer:")
         # \n - Matches a newline character after the prefix
@@ -68,7 +70,7 @@ class Model:
 
         self.outlines_tokenizer = outlines.models.TransformerTokenizer(self.tokenizer)
     
-    def generate_responses(self, dataloader, max_new_tokens=512, batch_size=32):
+    def generate_responses(self, dataloader, max_new_tokens=256, batch_size=32):
         """
         Generate responses for inputs from a dataloader using the pipeline
         

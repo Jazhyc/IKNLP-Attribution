@@ -78,7 +78,8 @@ class GSMDataset(BaseDataset):
                 if i == 0 or i == len(lines) - 1:  # Skip first and last lines
                     numbered_lines.append(line)
                 else:
-                    numbered_lines.append(f"Step {i}) {line}")
+                    # Add Step X) before the line
+                    numbered_lines.append(f"- {line}")
             
             # Rejoin with newlines
             answer = '\n'.join(numbered_lines)
