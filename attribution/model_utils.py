@@ -47,7 +47,7 @@ class Model:
         phrases = '|'.join(answer_phrases.values())
 
         # Regex pattern that enforces the "Step by Step Answer" format with numbered steps
-        self.output_pattern = f'(?i)(?P<prefix>{prefixes})\n(?P<calculation>(?:Step \d{{1,2}}\).*\n)+)(?:{phrases})\s+(?P<answer>.+)'
+        self.output_pattern = f'(?i)(?P<prefix>{prefixes})\n(?P<calculation>(?:Step \d{{1,2}}\).*\n)+)(?:{phrases})\s+(?P<answer>\d+)\.<|endoftext|>'
 
         # Detailed explanation:
         # (?i) - Case insensitive flag for the entire pattern
