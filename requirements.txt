@@ -4,4 +4,4 @@ transformers
 accelerate
 pandas
 torch
-outline
+outlines
