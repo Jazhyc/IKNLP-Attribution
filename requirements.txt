@@ -3,3 +3,5 @@ tqdm
 transformers
 accelerate
 pandas
+torch
+outline
