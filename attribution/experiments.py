@@ -103,3 +103,45 @@ def clean_generations():
             
             rp = ResponseProcessor(model_name, DatasetNames.MGSM, config)
             rp.process_model_responses_for_analysis(f'results/generations/{file}')
+
+def run_context_cite():
+    """
+    Run context cite on all processed results files in results/processed.
+    This function looks for CSV files that contain model responses with COT reasoning
+    and generates attribution scores for each line in the reasoning.
+    """
+    from attribution.contextcite import get_attributions
+    
+    # Create directory for context cite results
+    os.makedirs('results/contextcite', exist_ok=True)
+    
+    # Loop through all the files in results/processed
+    for file in os.listdir('results/processed'):
+        if file.endswith('_results.csv'):
+            # Skip if 'regular' in the filename (not using COT)
+            if 'regular' in file or 'unconstrained' in file:
+                continue
+            
+            # Extract information from filename
+            # Format: {dataset}_{config}_{response_type}_{constrained_str}_{model_name}_results.csv
+            parts = file.split('_')
+            dataset = parts[0]
+            config = parts[1]  # Language configuration
+            response_type = parts[2]  # Should be COT
+            model_name_part = parts[4]  # Model name part
+            
+            # Determine the model name
+            if ModelNames.QwenInstruct.split('/')[-1] in file:
+                model_name = ModelNames.QwenInstruct
+            elif ModelNames.QwenReasoning.split('/')[-1] in file:
+                model_name = ModelNames.QwenReasoning
+                
+            # Check if output file already exists
+            output_path = f'results/contextcite/contextcite_{config}_{model_name_part}_{response_type}.json'
+            if os.path.exists(output_path):
+                print(f"Context cite output for {file} already exists. Skipping...")
+                continue
+                
+            print(f"Running context cite on {file}...")
+            input_path = f'results/processed/{file}'
+            get_attributions(input_path, output_path, model_name)

@@ -1,0 +1,27 @@
+{
+    "contextcite_bn_Qwen2.5-1.5B-Instruct_COT": {
+        "error_count": 57,
+        "total_samples": 250,
+        "error_rate": 0.228
+    },
+    "contextcite_de_Qwen2.5-1.5B-Instruct_COT": {
+        "error_count": 65,
+        "total_samples": 250,
+        "error_rate": 0.26
+    },
+    "contextcite_en_Qwen2.5-1.5B-Instruct_COT": {
+        "error_count": 116,
+        "total_samples": 250,
+        "error_rate": 0.464
+    },
+    "contextcite_fr_Qwen2.5-1.5B-Instruct_COT": {
+        "error_count": 21,
+        "total_samples": 250,
+        "error_rate": 0.084
+    },
+    "contextcite_zh_Qwen2.5-1.5B-Instruct_COT": {
+        "error_count": 5,
+        "total_samples": 250,
+        "error_rate": 0.02
+    }
+}
