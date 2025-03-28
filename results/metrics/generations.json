@@ -1,0 +1,13 @@
+{
+    "mgsm_en_COT_unconstrained_Qwen2.5-1.5B-Instruct": 0.476,
+    "mgsm_en_regular_constrained_Qwen2.5-1.5B-Instruct": 0.076,
+    "mgsm_en_COT_constrained_Qwen2.5-1.5B-Instruct": 0.592,
+    "mgsm_bn_regular_constrained_Qwen2.5-1.5B-Instruct": 0.028,
+    "mgsm_bn_COT_constrained_Qwen2.5-1.5B-Instruct": 0.036,
+    "mgsm_de_regular_constrained_Qwen2.5-1.5B-Instruct": 0.024,
+    "mgsm_de_COT_constrained_Qwen2.5-1.5B-Instruct": 0.376,
+    "mgsm_fr_regular_constrained_Qwen2.5-1.5B-Instruct": 0.068,
+    "mgsm_fr_COT_constrained_Qwen2.5-1.5B-Instruct": 0.488,
+    "mgsm_zh_regular_constrained_Qwen2.5-1.5B-Instruct": 0.084,
+    "mgsm_zh_COT_constrained_Qwen2.5-1.5B-Instruct": 0.352
+}

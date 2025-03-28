@@ -8,15 +8,15 @@ class DatasetNames():
     Reveal = 'google/reveal'
     
 LANGUAGE_MAPPING = {
+    "en": "English",
     "bn": "Bengali",  # Assuming, as it's not fully visible
     "de": "German",
-    "en": "English",
-    "es": "Spanish",
+    # "es": "Spanish",
     "fr": "French",
-    "ja": "Japanese",
-    "ru": "Russian",
-    "sw": "Swahili",
-    "te": "Telugu",
-    "th": "Thai",
+    # "ja": "Japanese",
+    # "ru": "Russian",
+    # "sw": "Swahili",
+    # "te": "Telugu",
+    # "th": "Thai",
     "zh": "Chinese",
 }

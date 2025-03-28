@@ -27,29 +27,6 @@ class Model:
         )
         
         self.device = self.model.device
-        
-        # Ignore for now
-        # Define language-specific patterns
-        prefix_patterns = {
-            'english': r'Step-by-Step Answer:',
-            # 'french': r'Réponse étape par étape:',
-            # 'german': r'Schritt-für-Schritt-Antwort:',
-            # 'bangla': r'ধাপে ধাপে উত্তর:'
-        }
-
-        answer_phrases = {
-            'english': r'The answer is',
-            # 'french': r'La réponse est',
-            # 'german': r'Die Antwort lautet',
-            # 'bangla': r'উত্তর হল'
-        }
-
-        # Combine into regex pattern
-        prefixes = '|'.join(prefix_patterns.values())
-        phrases = '|'.join(answer_phrases.values())
-
-        # Regex pattern that enforces the "Step by Step Answer" format with numbered steps
-        self.output_pattern = f'(?P<prefix>{prefixes})\n(?P<calculation>(-[^\n]+\.\n){{1,10}})(?:{phrases})\s+(?P<answer>\d+)\.<|endoftext|>'
 
         # Detailed explanation (May be outdated):
         # (?i) - Case insensitive flag for the entire pattern
@@ -69,8 +46,34 @@ class Model:
         # (?P<answer>.+) - Named capture group "answer" capturing everything after the answer phrase
 
         self.outlines_tokenizer = outlines.models.TransformerTokenizer(self.tokenizer)
+        
+    def format_regex(self, config, use_COT=True):
+        
+        prefix_patterns = {
+            'en': r'Step-by-Step Answer:',
+            'fr': r'Réponse étape par étape :', # There is a deliberate space here due to French's nature
+            'de': r'Schritt-für-Schritt-Antwort:',
+            'bn': r'ধাপে ধাপে উত্তর:',
+            'zh': r'问题：'
+        }
+
+        answer_phrases = {
+            'en': r'The answer is',
+            'fr': r'La réponse est',
+            'de': r'Die Antwort lautet',
+            'bn': r'উত্তর হল',
+            'zh': r'答案是'
+        }
+        
+        # Regex pattern that enforces the "Step by Step Answer" format with numbered steps
+        output_pattern_COT = f'(?P<prefix>{prefix_patterns[config]})\n(?P<calculation>(-[^\n]+[\.।。]\n){{1,8}})(?:{answer_phrases[config]})\s+(?P<answer>\d+)[\.।]<|endoftext|>'
+        
+        # Only get the answer
+        output_pattern_regular = f'(?:{answer_phrases[config]})\s+(?P<answer>\d+)[\.।。]<|endoftext|>'
+        
+        return output_pattern_COT if use_COT else output_pattern_regular
     
-    def generate_responses(self, dataloader, max_new_tokens=256, batch_size=32):
+    def generate_responses(self, dataloader, config='en', max_new_tokens=256, batch_size=32, constrained_decoding=True, use_COT=True):
         """
         Generate responses for inputs from a dataloader using the pipeline
         
@@ -88,10 +91,10 @@ class Model:
             questions = batch['questions']
             
             # Needs to be defined every batch
-            outlines_processor = outlines.processors.RegexLogitsProcessor(
-                self.output_pattern,
+            outlines_processor = LogitsProcessorList([outlines.processors.RegexLogitsProcessor(
+                self.format_regex(config, use_COT),
                 self.outlines_tokenizer
-            )
+            )]) if constrained_decoding else None
             
             # Use the pipeline for batch generation
             outputs = self.pipeline(
@@ -100,7 +103,7 @@ class Model:
                 do_sample=True,
                 batch_size=batch_size,
                 return_full_text=False,  # Only return the newly generated text
-                logits_processor=LogitsProcessorList([outlines_processor]),
+                logits_processor=outlines_processor,
             )
             
             # Extract generated text from pipeline output
