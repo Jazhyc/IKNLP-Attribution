@@ -1,6 +1,7 @@
 from attribution.dataset_utils import GSMDataset, PaddingCollator, extract_answer_gsm, is_correct_gsm
-from attribution.constants import DatasetNames, ModelNames
+from attribution.constants import DatasetNames, ModelNames, LANGUAGE_MAPPING
 from attribution.model_utils import Model
+from attribution.cleaning import ResponseProcessor
 from torch.utils.data import DataLoader
 import os
 import json
@@ -73,4 +74,32 @@ def conduct_experiment(model_name=ModelNames.QwenInstruct, dataset_name=DatasetN
     print(f"Score saved to results/metrics/generations.json")
     
     
+def clean_generations():
     
+    # Loop through all the files in results/generations
+    for file in os.listdir('results/generations'):
+        if file.endswith('_results.csv'):
+            
+            # Skip if 'regular' in the filename
+            # These are the regular generations without COT
+            # Might still be worth formatting them later on
+            if 'regular' in file:
+                continue
+            
+            # Additionally, skip if file already in results/processed
+            if os.path.exists(f'results/processed/{file}'):
+                print(f"File {file} already processed. Skipping...")
+                continue
+            
+            # Probably a better way to do this
+            if ModelNames.QwenInstruct.split('/')[-1] in file:
+                model_name = ModelNames.QwenInstruct
+            elif ModelNames.QwenReasoning.split('/')[-1] in file:
+                model_name = ModelNames.QwenReasoning
+            
+            for lang in LANGUAGE_MAPPING.keys():
+                if f'_{lang}_' in file:
+                    config = lang
+            
+            rp = ResponseProcessor(model_name, DatasetNames.MGSM, config)
+            rp.process_model_responses_for_analysis(f'results/generations/{file}')
