@@ -1,0 +1,5 @@
+Setting,Model,Train Accuracy,Val Accuracy,Val Precision,Val Recall,Val F1 Score
+English-only,Logistic Regression,0.7944,0.6667,0.7083,0.8947,0.7907
+English-only,LightGBM,0.9346,0.7037,0.7200,0.9474,0.8182
+Multilingual,Logistic Regression,0.5853,0.6335,0.5660,0.3896,0.4615
+Multilingual,LightGBM,0.8373,0.6283,0.5441,0.4805,0.5103
