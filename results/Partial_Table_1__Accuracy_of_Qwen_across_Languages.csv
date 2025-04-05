@@ -1,0 +1,6 @@
+,LightGBM,Logistic Regression,CoT (Structured)
+EN,70.0,67.0,59.2
+BN,63.0,63.0,0.0
+FR,63.0,63.0,48.8
+DE,63.0,63.0,37.6
+ZH,63.0,63.0,0.0
