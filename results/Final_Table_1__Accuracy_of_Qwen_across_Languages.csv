@@ -1,0 +1,6 @@
+Language,LightGBM,Logistic Regression,Direct Answer (Unstructured),CoT (Unstructured),Direct Answer (Structured),CoT (Structured)
+EN,70.0,67.0,7.6,47.6,,59.2
+BN,63.0,63.0,2.8,3.6,,0.0
+FR,63.0,63.0,6.8,48.8,,48.8
+DE,63.0,63.0,2.4,37.6,,37.6
+ZH,63.0,63.0,8.4,35.2,,0.0
