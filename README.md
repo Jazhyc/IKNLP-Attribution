@@ -19,6 +19,8 @@ ContextCite evaluates the importance of each reasoning step in a chain-of-though
 pip install -r requirements.txt .
 ```
 
+Note: You may want to install pytorch with GPU support separately.
+
 ### Running the Experiments
 
 To run Context Cite experiments:
