@@ -2,7 +2,7 @@
 
 ### 1. Getting Detailed Inseq Attributions  
 To reproduce the detailed [inseq](https://github.com/inseq-team/inseq) attributions discussed in the paper, run:  
-- **Notebook:** [`notebooks/inseq_experiments.ipynb`](/notebooks/inseq_experiments.ipynb)  
+- **Notebook:** [`notebooks/inseq_attributions_multilingual.ipynb`](/notebooks/inseq_experiments.ipynb)  
 
 ### 2. Data Containing Filtered Attribution Scores  
 For convenience, we provide filtered attribution scores (manually selected from the full outputs):  
