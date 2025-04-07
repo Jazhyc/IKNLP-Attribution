@@ -1,6 +1,6 @@
-## Inseq Experiments
+## Running the Inseq Experiments
 
-### 1. Detailed Inseq Attributions  
+### 1. Getting Detailed Inseq Attributions  
 To reproduce the detailed [inseq](https://github.com/inseq-team/inseq) attributions discussed in the paper, run:  
 - **Notebook:** [`notebooks/inseq_experiments.ipynb`](/notebooks/inseq_experiments.ipynb)  
 
