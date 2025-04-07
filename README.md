@@ -1,6 +1,7 @@
 # What Really Counts? Examining Step and Token Level Attribution in Multilingual Chain-of-Thought Reasoning
 
 This repository contains the code and experiments for the "What Really Counts? Examining Step and Token Level Attribution in Multilingual Chain-of-Thought Reasoning" project conducted as part of the Advanced Topics in NLP (IK-NLP) course 2025 at the University of Groningen. The project explores how multilingual models attribute importance to different reasoning steps when solving mathematical problems across various languages.
+This repository contains the code and experiments for the "Attribution in Large Language Models" project conducted as part of the Advanced Topics in NLP (IK-NLP) course 2025 at the University of Groningen. The project explores how multilingual models attribute importance to different reasoning steps when solving mathematical problems across various languages in the [MGSM Dataset](https://huggingface.co/datasets/juletxara/mgsm).
 
 ## Overview
 
@@ -25,9 +26,9 @@ Note: You may want to install pytorch with GPU support separately.
 
 To run Context Cite experiments:
 
-1. Modify `main.py` to specify your desired configuration:
+1. Modify `main.py` to specify your desired configuration. Options include using structured generation, few shot prompting, different model types, and languages to test.
 
-2. Run the main script:
+2. Run the main script which will execute the whole pipeline:
 
 ```bash
 python main.py
