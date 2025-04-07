@@ -5,3 +5,9 @@ accelerate
 pandas
 torch
 outlines
+inseq @ git+https://github.com/inseq-team/inseq.git@main
+bitsandbytes
+spacy
+numpy
+seaborn
+matplotlib
