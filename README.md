@@ -16,7 +16,7 @@ ContextCite evaluates the importance of each reasoning step in a chain-of-though
 ### Installation
 
 ```bash
-pip install -r requirements.txt .
+pip install -r requirements.txt
 ```
 
 Note: You may want to install pytorch with GPU support separately.
@@ -32,6 +32,8 @@ To run Context Cite experiments:
 ```bash
 python main.py
 ```
+
+By default, the script will skip experiments that have already been executed. Manual deletion of files in `results/` is currently necessary to rerun the desired experiment.
 
 ### Analyzing Results
 

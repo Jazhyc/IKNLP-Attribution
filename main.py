@@ -4,9 +4,9 @@ from attribution.constants import LANGUAGE_MAPPING, ModelNames
 
 if __name__ == '__main__':
     # Define configuration options
-    languages = ['en', 'zh']
-    cot_options = [False]
-    model_name = ModelNames.QwenReasoning
+    languages = ['en', 'zh'] # Languages to Test
+    cot_options = [False, True] # Whether to use COT through few-shot prompting
+    model_name = ModelNames.QwenInstruct
     
     # Generate all combinations using itertools.product
     all_configs = itertools.product(languages, cot_options)
@@ -14,6 +14,7 @@ if __name__ == '__main__':
     # Run experiments for each combination
     for language, use_cot in all_configs:
         print(f"Running experiment: language={language}, COT={use_cot}")
+        # Optionally disable structured generation (constrained decoding) here
         conduct_experiment(model_name=model_name, config=language, use_COT=use_cot, constrained_decoding=True)
     
     print("Cleaning up generations...")
