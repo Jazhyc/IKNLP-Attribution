@@ -5,7 +5,7 @@ from attribution.constants import LANGUAGE_MAPPING, ModelNames
 if __name__ == '__main__':
     # Define configuration options
     languages = ['en', 'zh']
-    cot_options = [True]
+    cot_options = [False]
     model_name = ModelNames.QwenReasoning
     
     # Generate all combinations using itertools.product

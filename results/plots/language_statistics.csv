@@ -1,0 +1,3 @@
+Language,Total Samples,Correct Samples,Correct %,Incorrect Samples,Incorrect %,Train Size,Val Size
+English,205,150,73.2%,55,26.8%,164,41
+Chinese,219,74,33.8%,145,66.2%,175,44

@@ -14,5 +14,7 @@
     "mgsm_en_regular_unconstrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.148,
     "mgsm_zh_regular_unconstrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.096,
     "mgsm_en_COT_constrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.712,
-    "mgsm_zh_COT_constrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.312
+    "mgsm_zh_COT_constrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.312,
+    "mgsm_en_regular_constrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.136,
+    "mgsm_zh_regular_constrained_DeepSeek-R1-Distill-Qwen-1.5B": 0.096
 }
