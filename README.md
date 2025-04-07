@@ -1,6 +1,6 @@
-# Attribution Analysis of Multilingual Models
+# What Really Counts? Examining Step and Token Level Attribution in Multilingual Chain-of-Thought Reasoning
 
-This repository contains the code and experiments for the "Attribution in Large Language Models" project conducted as part of the Advanced Topics in NLP (IK-NLP) course 2025 at the University of Groningen. The project explores how multilingual models attribute importance to different reasoning steps when solving mathematical problems across various languages.
+This repository contains the code and experiments for the "What Really Counts? Examining Step and Token Level Attribution in Multilingual Chain-of-Thought Reasoning" project conducted as part of the Advanced Topics in NLP (IK-NLP) course 2025 at the University of Groningen. The project explores how multilingual models attribute importance to different reasoning steps when solving mathematical problems across various languages.
 
 ## Overview
 
