@@ -66,7 +66,7 @@ class Model:
         }
         
         # Regex pattern that enforces the "Step by Step Answer" format with numbered steps
-        output_pattern_COT = f'(?P<prefix>{prefix_patterns[config]})\n(?P<calculation>(-[^\n]+[\.।。]\n){{1,8}})(?:{answer_phrases[config]})\s+(?P<answer>\d+)[\.।]<|endoftext|>'
+        output_pattern_COT = f'(?P<prefix>{prefix_patterns[config]})\n(?P<calculation>(-[^\n]+[\.।。]\n){{1,8}})(?:{answer_phrases[config]})\s+(?P<answer>\d+)[\.।。]<|endoftext|>'
         
         # Only get the answer
         output_pattern_regular = f'(?:{answer_phrases[config]})\s+(?P<answer>\d+)[\.।。]<|endoftext|>'
